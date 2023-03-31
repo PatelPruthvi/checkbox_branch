@@ -40,8 +40,9 @@ class _listViewState extends State<listView> {
         ),
         ElevatedButton(
             onPressed: () async {
-              DatabaseEvent rf =
-                  await FirebaseDatabase.instance.ref("students").once();
+              DatabaseEvent rf = await FirebaseDatabase.instance
+                  .ref("students/CE/6/CE1/LEC/students")
+                  .once();
               DatabaseReference sub;
               rf.snapshot.children.forEach((uid) async {
                 sub = FirebaseDatabase.instance.ref(
@@ -59,8 +60,7 @@ class _listViewState extends State<listView> {
                 }
                 sol.forEach((element) {
                   FirebaseDatabase.instance
-                      .ref(
-                          "students/CE/6/CE1/LEC/students/${element}/subject/CN")
+                      .ref("students/CE/6/CE1/LEC/students/$element/subject/CN")
                       .update({'present': ServerValue.increment(1)});
                 });
               });
