@@ -1,4 +1,5 @@
 import 'package:fb_cb/screens/login.dart';
+import 'package:fb_cb/screens/teacher.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 

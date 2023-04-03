@@ -1,21 +1,24 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
-class listView extends StatefulWidget {
-  listView({Key? key}) : super(key: key);
+class listView2 extends StatefulWidget {
+  String sub;
+  String path;
+  Query lv;
+  listView2({
+    Key? key,
+    required this.sub,
+    required this.path,
+    required this.lv,
+  }) : super(key: key);
 
   @override
-  State<listView> createState() => _listViewState();
+  State<listView2> createState() => _listView2State();
 }
 
-class _listViewState extends State<listView> {
-  Query lv = FirebaseDatabase.instance
-      .ref("students/CE/6/CE1/LEC/students")
-      .orderByChild('id');
-
+class _listView2State extends State<listView2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +26,7 @@ class _listViewState extends State<listView> {
       body: Column(children: [
         Expanded(
           child: FirebaseAnimatedList(
-              query: lv,
+              query: widget.lv.orderByChild('id'),
               itemBuilder: (context, snapshot, animation, index) {
                 return CheckboxListTile(
                     title: Text(snapshot.child('id').value.toString()),
@@ -31,8 +34,8 @@ class _listViewState extends State<listView> {
                     value: snapshot.child('cb').value as bool,
                     onChanged: ((value) {
                       setState(() {
-                        DatabaseReference rf = FirebaseDatabase.instance.ref(
-                            "students/CE/6/CE1/LEC/students/${snapshot.key}");
+                        DatabaseReference rf = FirebaseDatabase.instance
+                            .ref("${widget.path}/${snapshot.key}");
                         rf.update({"cb": value!});
                       });
                     }));
@@ -40,18 +43,17 @@ class _listViewState extends State<listView> {
         ),
         ElevatedButton(
             onPressed: () async {
-              DatabaseEvent rf = await FirebaseDatabase.instance
-                  .ref("students/CE/6/CE1/LEC/students")
-                  .once();
+              DatabaseEvent rf =
+                  await FirebaseDatabase.instance.ref(widget.path).once();
               DatabaseReference sub;
               rf.snapshot.children.forEach((uid) async {
-                sub = FirebaseDatabase.instance.ref(
-                    "students/CE/6/CE1/LEC/students/${uid.key}/subject/CN");
+                sub = FirebaseDatabase.instance
+                    .ref("${widget.path}/${uid.key}/subject/${widget.sub}");
                 await sub.update({'total': ServerValue.increment(1)});
               });
               rf.snapshot.children.forEach((uid) async {
                 DatabaseEvent cb = await FirebaseDatabase.instance
-                    .ref("students/CE/6/CE1/LEC/students/${uid.key}")
+                    .ref("${widget.path}/${uid.key}")
                     .once();
                 List<String> sol = [];
 
@@ -60,7 +62,7 @@ class _listViewState extends State<listView> {
                 }
                 sol.forEach((element) {
                   FirebaseDatabase.instance
-                      .ref("students/CE/6/CE1/LEC/students/$element/subject/CN")
+                      .ref("${widget.path}/${element}/subject/${widget.sub}")
                       .update({'present': ServerValue.increment(1)});
                 });
               });
