@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +20,30 @@ class listView2 extends StatefulWidget {
 }
 
 class _listView2State extends State<listView2> {
+  bool cbval = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('List View')),
+      appBar: AppBar(
+        title: Text('List View'),
+        actions: [
+          Checkbox(
+              value: cbval,
+              onChanged: (val) async {
+                setState(() {
+                  cbval = val!;
+                });
+                DatabaseEvent rf =
+                    await FirebaseDatabase.instance.ref(widget.path).once();
+                DatabaseReference sub;
+                rf.snapshot.children.forEach((uid) {
+                  sub = FirebaseDatabase.instance
+                      .ref("${widget.path}/${uid.key}");
+                  sub.update({"cb": cbval});
+                });
+              })
+        ],
+      ),
       body: Column(children: [
         Expanded(
           child: FirebaseAnimatedList(
