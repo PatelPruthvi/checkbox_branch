@@ -22,36 +22,49 @@ class _TimeTableState extends State<TimeTable> {
     String id = FirebaseAuth.instance.currentUser!.uid;
     Query lv = FirebaseDatabase.instance.ref('faculty/$id/${widget.day}');
     return Scaffold(
-      body: FirebaseAnimatedList(
-        query: lv,
-        itemBuilder: (context, snapshot, animation, index) {
-          Map data = snapshot.value as Map;
+      body: Column(
+        children: [
+          Expanded(
+            child: FirebaseAnimatedList(
+              query: lv,
+              itemBuilder: (context, snapshot, animation, index) {
+                Map data = snapshot.value as Map;
 
-          return SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () {
-                  Query pathtott =
-                      FirebaseDatabase.instance.ref().child(data['path']);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => listView2(
-                              lv: pathtott,
-                              path: data['path'],
-                              sub: data['subject'])));
-                },
-                child: ListTile(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  tileColor: Color.fromARGB(255, 209, 192, 238),
-                  title: Text(snapshot.key.toString()),
-                ),
-              ),
+                return SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Query pathtott =
+                            FirebaseDatabase.instance.ref().child(data['path']);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => listView2(
+                                    lv: pathtott,
+                                    path: data['path'],
+                                    sub: data['subject'])));
+                      },
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        tileColor: Color.fromARGB(255, 209, 192, 238),
+                        title: Text(snapshot.key.toString()),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+          ElevatedButton(
+            onPressed: () {
+              String id = FirebaseAuth.instance.currentUser!.uid;
+              FirebaseDatabase.instance.ref();
+            },
+            child: Text('hi'),
+          )
+        ],
       ),
     );
   }

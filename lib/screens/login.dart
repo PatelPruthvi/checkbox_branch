@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fb_cb/flutee.dart';
+import 'package:fb_cb/screens/dashboard.dart';
 
 import 'package:fb_cb/screens/listView.dart';
 import 'package:fb_cb/screens/lv2.dart';
@@ -39,11 +41,44 @@ class _loginScreenState extends State<loginScreen> {
                 onPressed: () async {
                   await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: name.text, password: pass.text);
-                  String id = FirebaseAuth.instance.currentUser!.uid;
+                  //roll no to firebase auth mapping
+                  // DatabaseEvent up = await FirebaseDatabase.instance
+                  //     .ref('classes/6cse2')
+                  //     .once();
+                  // Map data = <String, String>{};
+                  // up.snapshot.children.forEach((element) {
+                  //   Map val = element.value as Map;
+                  //   String id = val['id'];
+                  //   String k = element.key.toString();
+                  //   data.update(id, (value) => k, ifAbsent: () => k);
+                  //   print(data);
+                  // });
+                  // FirebaseDatabase.instance.ref('classes/6cse2').remove();
+                  // data.forEach((key, value) {
+                  //   FirebaseDatabase.instance
+                  //       .ref('classes/6cse2')
+                  //       .update({key: value});
+                  // });
 
+                  // String id = FirebaseAuth.instance.currentUser!.uid;
+                  // DatabaseEvent a = await userDetails();
+                  // print(a.snapshot.value);
                   // ignore: use_build_context_synchronously
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => listView()));
+                  String id = FirebaseAuth.instance.currentUser!.uid;
+                  DatabaseEvent db =
+                      await FirebaseDatabase.instance.ref('trydb1/$id').once();
+                  Map data = db.snapshot.value as Map;
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => getuserName(
+                                name: data['name'],
+                                roll: data['id'],
+                                str: data['id'].toString().substring(3, 5),
+                                percent: "",
+                                DocumentID: id,
+                              )));
                 },
                 child: Text('SUBMIT')),
             ElevatedButton(
